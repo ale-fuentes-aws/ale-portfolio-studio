@@ -1,0 +1,6 @@
+{
+  "name": "AlePortfolio",
+  "description": "Personal investment management platform centralizing NOMAD (USD) and CLEAR (BRL) portfolios, asset allocation rebalancing, and Brazilian tax & DARF compliance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

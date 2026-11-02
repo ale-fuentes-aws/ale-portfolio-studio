@@ -1,0 +1,221 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AlePortfolio Database Schema",
+  "description": "Relational spreadsheet database schema for AlePortfolio Personal Investment Management Platform",
+  "version": "1.0.0",
+  "baseCurrency": "BRL",
+  "secondaryCurrency": "USD",
+  "tables": {
+    "BROKERS": {
+      "description": "Supported investment brokerage institutions",
+      "primaryKey": "broker_id",
+      "columns": [
+        {"name": "broker_id", "type": "string", "required": true, "example": "CLEAR"},
+        {"name": "name", "type": "string", "required": true, "example": "Clear Corretora"},
+        {"name": "country", "type": "string", "required": true, "example": "BR"},
+        {"name": "base_currency", "type": "string", "required": true, "example": "BRL"},
+        {"name": "active", "type": "boolean", "required": true, "example": true},
+        {"name": "supported_asset_classes", "type": "string", "required": true, "example": "ACOES,FIIS,FUTUROS,TESOURO"},
+        {"name": "notes", "type": "string", "required": false, "example": "Conta brasileira para ações e FIIs"}
+      ]
+    },
+    "ASSETS": {
+      "description": "Financial instruments registered across brokers",
+      "primaryKey": "ticker",
+      "foreignKeys": [{"column": "broker_id", "references": "BROKERS.broker_id"}],
+      "columns": [
+        {"name": "ticker", "type": "string", "required": true, "example": "PETR4"},
+        {"name": "name", "type": "string", "required": true, "example": "Petróleo Brasileiro S.A. - Petrobras PN"},
+        {"name": "broker_id", "type": "string", "required": true, "example": "CLEAR"},
+        {"name": "asset_class", "type": "enum", "values": ["ACOES", "FIIS", "ETF_INTL", "STOCKS_US", "FUTUROS", "CASH"], "required": true, "example": "ACOES"},
+        {"name": "currency", "type": "string", "required": true, "example": "BRL"},
+        {"name": "current_price", "type": "number", "required": true, "example": 38.50},
+        {"name": "price_updated_at", "type": "datetime", "required": true, "example": "2026-11-02T10:00:00Z"},
+        {"name": "sector", "type": "string", "required": false, "example": "Petróleo, Gás e Biocombustíveis"}
+      ]
+    },
+    "PORTFOLIO": {
+      "description": "Aggregated active holdings per asset and broker",
+      "primaryKey": "holding_id",
+      "foreignKeys": [
+        {"column": "ticker", "references": "ASSETS.ticker"},
+        {"column": "broker_id", "references": "BROKERS.broker_id"}
+      ],
+      "columns": [
+        {"name": "holding_id", "type": "string", "required": true, "example": "CLEAR_PETR4"},
+        {"name": "broker_id", "type": "string", "required": true, "example": "CLEAR"},
+        {"name": "ticker", "type": "string", "required": true, "example": "PETR4"},
+        {"name": "asset_class", "type": "string", "required": true, "example": "ACOES"},
+        {"name": "quantity", "type": "number", "required": true, "example": 300},
+        {"name": "average_price", "type": "number", "required": true, "example": 35.20},
+        {"name": "total_invested", "type": "number", "required": true, "example": 10560.00},
+        {"name": "current_price", "type": "number", "required": true, "example": 38.50},
+        {"name": "market_value", "type": "number", "required": true, "example": 11550.00},
+        {"name": "unrealized_pl", "type": "number", "required": true, "example": 990.00},
+        {"name": "unrealized_pl_pct", "type": "number", "required": true, "example": 9.375},
+        {"name": "currency", "type": "string", "required": true, "example": "BRL"},
+        {"name": "market_value_brl", "type": "number", "required": true, "example": 11550.00}
+      ]
+    },
+    "TRANSACTIONS": {
+      "description": "Historical log of buy, sell, split, deposit, withdrawal and fee operations",
+      "primaryKey": "transaction_id",
+      "foreignKeys": [
+        {"column": "broker_id", "references": "BROKERS.broker_id"},
+        {"column": "ticker", "references": "ASSETS.ticker"}
+      ],
+      "columns": [
+        {"name": "transaction_id", "type": "string", "required": true, "example": "TX-2026-001"},
+        {"name": "broker_id", "type": "string", "required": true, "example": "CLEAR"},
+        {"name": "date", "type": "date", "required": true, "example": "2026-10-15"},
+        {"name": "ticker", "type": "string", "required": true, "example": "VALE3"},
+        {"name": "type", "type": "enum", "values": ["BUY", "SELL", "DIVIDEND", "DEPOSIT", "WITHDRAWAL", "FEE"], "required": true, "example": "BUY"},
+        {"name": "trade_category", "type": "enum", "values": ["SWING_TRADE", "DAY_TRADE", "NOT_APPLICABLE"], "required": true, "example": "SWING_TRADE"},
+        {"name": "quantity", "type": "number", "required": true, "example": 100},
+        {"name": "unit_price", "type": "number", "required": true, "example": 64.30},
+        {"name": "gross_value", "type": "number", "required": true, "example": 6430.00},
+        {"name": "brokerage_fees", "type": "number", "required": true, "example": 4.50},
+        {"name": "b3_emoluments", "type": "number", "required": true, "example": 1.95},
+        {"name": "irrf", "type": "number", "required": true, "example": 0.00},
+        {"name": "net_value", "type": "number", "required": true, "example": 6436.45},
+        {"name": "currency", "type": "string", "required": true, "example": "BRL"},
+        {"name": "exchange_rate", "type": "number", "required": true, "example": 1.0},
+        {"name": "realized_pl", "type": "number", "required": false, "example": 0.0},
+        {"name": "statement_ref", "type": "string", "required": false, "example": "NOTA-CORRETAGEM-14892"},
+        {"name": "reconciliation_hash", "type": "string", "required": true, "example": "hash_CLEAR_VALE3_BUY_20261015_100"}
+      ]
+    },
+    "ALLOCATIONS": {
+      "description": "Target vs current asset, class, and broker portfolio distribution rules",
+      "primaryKey": "allocation_id",
+      "columns": [
+        {"name": "allocation_id", "type": "string", "required": true, "example": "CAT_ACOES"},
+        {"name": "level", "type": "enum", "values": ["BROKER", "ASSET_CLASS", "INDIVIDUAL_ASSET", "CASH"], "required": true, "example": "ASSET_CLASS"},
+        {"name": "target_identifier", "type": "string", "required": true, "example": "ACOES"},
+        {"name": "label", "type": "string", "required": true, "example": "Ações Brasil"},
+        {"name": "target_percentage", "type": "number", "required": true, "example": 25.0},
+        {"name": "tolerance_warning_pp", "type": "number", "required": true, "example": 2.0},
+        {"name": "tolerance_critical_pp", "type": "number", "required": true, "example": 5.0}
+      ]
+    },
+    "EXCHANGE_RATES": {
+      "description": "Historical and current foreign exchange rates for consolidation",
+      "primaryKey": "rate_id",
+      "columns": [
+        {"name": "rate_id", "type": "string", "required": true, "example": "USD_BRL_20261102"},
+        {"name": "currency_pair", "type": "string", "required": true, "example": "USD/BRL"},
+        {"name": "reference_date", "type": "date", "required": true, "example": "2026-11-02"},
+        {"name": "rate", "type": "number", "required": true, "example": 5.4200},
+        {"name": "source", "type": "string", "required": true, "example": "Banco Central do Brasil / PTAX"},
+        {"name": "is_current", "type": "boolean", "required": true, "example": true}
+      ]
+    },
+    "DIVIDENDS": {
+      "description": "Proventos, dividends, JCP and rendimentos received",
+      "primaryKey": "dividend_id",
+      "foreignKeys": [
+        {"column": "broker_id", "references": "BROKERS.broker_id"},
+        {"column": "ticker", "references": "ASSETS.ticker"}
+      ],
+      "columns": [
+        {"name": "dividend_id", "type": "string", "required": true, "example": "DIV-2026-001"},
+        {"name": "broker_id", "type": "string", "required": true, "example": "CLEAR"},
+        {"name": "ticker", "type": "string", "required": true, "example": "MXRF11"},
+        {"name": "type", "type": "enum", "values": ["RENDIMENTO", "DIVIDENDO", "JCP"], "required": true, "example": "RENDIMENTO"},
+        {"name": "payment_date", "type": "date", "required": true, "example": "2026-10-15"},
+        {"name": "gross_amount", "type": "number", "required": true, "example": 85.00},
+        {"name": "withholding_tax", "type": "number", "required": true, "example": 0.00},
+        {"name": "net_amount", "type": "number", "required": true, "example": 85.00},
+        {"name": "currency", "type": "string", "required": true, "example": "BRL"}
+      ]
+    },
+    "TAX_MONTHLY": {
+      "description": "Monthly Brazilian tax closing calculations by operational category",
+      "primaryKey": "tax_closing_id",
+      "columns": [
+        {"name": "tax_closing_id", "type": "string", "required": true, "example": "TAX-2026-10-CLEAR"},
+        {"name": "year_month", "type": "string", "required": true, "example": "2026-10"},
+        {"name": "broker_id", "type": "string", "required": true, "example": "CLEAR"},
+        {"name": "category", "type": "enum", "values": ["ACOES_SWING", "DAY_TRADE", "FIIS", "FUTUROS_SWING"], "required": true, "example": "ACOES_SWING"},
+        {"name": "total_sales_value", "type": "number", "required": true, "example": 24500.00},
+        {"name": "gross_profit_loss", "type": "number", "required": true, "example": 3200.00},
+        {"name": "deductible_costs", "type": "number", "required": true, "example": 45.20},
+        {"name": "net_operational_result", "type": "number", "required": true, "example": 3154.80},
+        {"name": "exempt_sales_flag", "type": "boolean", "required": true, "example": false},
+        {"name": "previous_accumulated_loss", "type": "number", "required": true, "example": 500.00},
+        {"name": "loss_compensated", "type": "number", "required": true, "example": 500.00},
+        {"name": "taxable_base", "type": "number", "required": true, "example": 2654.80},
+        {"name": "tax_rate", "type": "number", "required": true, "example": 0.15},
+        {"name": "gross_tax_due", "type": "number", "required": true, "example": 398.22},
+        {"name": "irrf_credits_deducted", "type": "number", "required": true, "example": 1.23},
+        {"name": "prior_underminumum_tax", "type": "number", "required": true, "example": 0.00},
+        {"name": "final_tax_due", "type": "number", "required": true, "example": 396.99},
+        {"name": "closing_status", "type": "enum", "values": ["CLOSED", "PROVISIONAL"], "required": true, "example": "CLOSED"}
+      ]
+    },
+    "TAX_LOSSES": {
+      "description": "Historical tracking of compensable accumulated losses by category",
+      "primaryKey": "loss_id",
+      "columns": [
+        {"name": "loss_id", "type": "string", "required": true, "example": "LOSS-ACOES-202610"},
+        {"name": "category", "type": "enum", "values": ["ACOES_SWING", "DAY_TRADE", "FIIS", "FUTUROS_SWING"], "required": true, "example": "ACOES_SWING"},
+        {"name": "year_month", "type": "string", "required": true, "example": "2026-10"},
+        {"name": "beginning_loss_balance", "type": "number", "required": true, "example": 500.00},
+        {"name": "loss_incurred_in_month", "type": "number", "required": true, "example": 0.00},
+        {"name": "loss_compensated_in_month", "type": "number", "required": true, "example": 500.00},
+        {"name": "ending_loss_balance", "type": "number", "required": true, "example": 0.00}
+      ]
+    },
+    "DARF": {
+      "description": "Official Brazilian DARF tax obligations, payment deadlines and payment status",
+      "primaryKey": "darf_id",
+      "columns": [
+        {"name": "darf_id", "type": "string", "required": true, "example": "DARF-2026-10"},
+        {"name": "period_reference", "type": "string", "required": true, "example": "2026-10"},
+        {"name": "tax_code", "type": "string", "required": true, "example": "6015"},
+        {"name": "tax_code_description", "type": "string", "required": true, "example": "Ganhos Líquidos em Operações em Bolsa - PF"},
+        {"name": "amount_due", "type": "number", "required": true, "example": 396.99},
+        {"name": "due_date", "type": "date", "required": true, "example": "2026-11-30"},
+        {"name": "status", "type": "enum", "values": ["NO_DARF_REQUIRED", "DARF_TO_BE_ISSUED", "DARF_PENDING_PAYMENT", "DARF_PAID", "DARF_OVERDUE"], "required": true, "example": "DARF_PENDING_PAYMENT"},
+        {"name": "paid_date", "type": "date", "required": false, "example": null},
+        {"name": "paid_amount", "type": "number", "required": false, "example": null},
+        {"name": "proof_reference", "type": "string", "required": false, "example": null},
+        {"name": "notes", "type": "string", "required": false, "example": "DARF ref Outubro/2026 (Swing Trade Ações)"}
+      ]
+    },
+    "CASH_BALANCES": {
+      "description": "Available cash balance per broker and currency",
+      "primaryKey": "balance_id",
+      "foreignKeys": [{"column": "broker_id", "references": "BROKERS.broker_id"}],
+      "columns": [
+        {"name": "balance_id", "type": "string", "required": true, "example": "CASH_CLEAR"},
+        {"name": "broker_id", "type": "string", "required": true, "example": "CLEAR"},
+        {"name": "currency", "type": "string", "required": true, "example": "BRL"},
+        {"name": "available_cash", "type": "number", "required": true, "example": 15420.50},
+        {"name": "reserved_cash", "type": "number", "required": true, "example": 2000.00},
+        {"name": "last_updated", "type": "datetime", "required": true, "example": "2026-11-02T10:00:00Z"}
+      ]
+    },
+    "SETTINGS": {
+      "description": "User preferences, API configurations, and tax parameters",
+      "primaryKey": "key",
+      "columns": [
+        {"name": "key", "type": "string", "required": true, "example": "rebalance_tolerance_warning_pp"},
+        {"name": "value", "type": "string", "required": true, "example": "2.0"},
+        {"name": "description", "type": "string", "required": true, "example": "Desvio percentual para alerta de aviso de rebalanceamento"}
+      ]
+    },
+    "AUDIT_LOG": {
+      "description": "Immutable log of all system changes, calculations, and sync operations",
+      "primaryKey": "log_id",
+      "columns": [
+        {"name": "log_id", "type": "string", "required": true, "example": "LOG-1730540000000"},
+        {"name": "timestamp", "type": "datetime", "required": true, "example": "2026-11-02T10:00:00Z"},
+        {"name": "event_type", "type": "string", "required": true, "example": "TRANSACTION_IMPORT"},
+        {"name": "entity", "type": "string", "required": true, "example": "TRANSACTIONS"},
+        {"name": "details", "type": "string", "required": true, "example": "Imported 12 transactions from CLEAR nota"},
+        {"name": "operator", "type": "string", "required": true, "example": "USER"}
+      ]
+    }
+  }
+}

@@ -1,0 +1,721 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { DatabaseState } from '../types/portfolio';
+
+/**
+ * Initial Fictitious Sample Dataset for AlePortfolio
+ * Clearly marked as FICTITIOUS / SIMULATED for demonstration, testing, and architecture validation.
+ */
+export const INITIAL_FICTITIOUS_DATABASE: DatabaseState = {
+  is_sample_data: true,
+  brokers: [
+    {
+      broker_id: 'CLEAR',
+      name: 'Clear Corretora',
+      country: 'BR',
+      base_currency: 'BRL',
+      active: true,
+      supported_asset_classes: ['ACOES', 'FIIS', 'FUTUROS'],
+      notes: 'Corretora brasileira para ações, FIIs e contratos futuros (Mini Índice/Dólar).'
+    },
+    {
+      broker_id: 'NOMAD',
+      name: 'Nomad Global',
+      country: 'US',
+      base_currency: 'USD',
+      active: true,
+      supported_asset_classes: ['STOCKS_US', 'ETF_INTL'],
+      notes: 'Conta internacional de investimentos nos EUA em Dólares (USD).'
+    }
+  ],
+  assets: [
+    // CLEAR Assets (BRL)
+    {
+      ticker: 'PETR4',
+      name: 'Petrobras PN',
+      broker_id: 'CLEAR',
+      asset_class: 'ACOES',
+      currency: 'BRL',
+      current_price: 38.60,
+      price_updated_at: '2026-11-02T09:00:00Z',
+      sector: 'Petróleo e Biocombustíveis'
+    },
+    {
+      ticker: 'VALE3',
+      name: 'Vale ON',
+      broker_id: 'CLEAR',
+      asset_class: 'ACOES',
+      currency: 'BRL',
+      current_price: 61.20,
+      price_updated_at: '2026-11-02T09:00:00Z',
+      sector: 'Mineração e Siderurgia'
+    },
+    {
+      ticker: 'WEGE3',
+      name: 'WEG S.A. ON',
+      broker_id: 'CLEAR',
+      asset_class: 'ACOES',
+      currency: 'BRL',
+      current_price: 52.40,
+      price_updated_at: '2026-11-02T09:00:00Z',
+      sector: 'Bens de Capital / Motores'
+    },
+    {
+      ticker: 'ITUB4',
+      name: 'Itaú Unibanco PN',
+      broker_id: 'CLEAR',
+      asset_class: 'ACOES',
+      currency: 'BRL',
+      current_price: 35.80,
+      price_updated_at: '2026-11-02T09:00:00Z',
+      sector: 'Financeiro / Bancos'
+    },
+    {
+      ticker: 'MXRF11',
+      name: 'Maxi Renda FII',
+      broker_id: 'CLEAR',
+      asset_class: 'FIIS',
+      currency: 'BRL',
+      current_price: 10.15,
+      price_updated_at: '2026-11-02T09:00:00Z',
+      sector: 'Papéis / CRI'
+    },
+    {
+      ticker: 'HGLG11',
+      name: 'CSHG Logística FII',
+      broker_id: 'CLEAR',
+      asset_class: 'FIIS',
+      currency: 'BRL',
+      current_price: 164.50,
+      price_updated_at: '2026-11-02T09:00:00Z',
+      sector: 'Logística e Galpões'
+    },
+    {
+      ticker: 'XPML11',
+      name: 'XP Malls FII',
+      broker_id: 'CLEAR',
+      asset_class: 'FIIS',
+      currency: 'BRL',
+      current_price: 112.00,
+      price_updated_at: '2026-11-02T09:00:00Z',
+      sector: 'Shopping Centers'
+    },
+    {
+      ticker: 'WINZ26',
+      name: 'Mini Contrato Índice Bovespa',
+      broker_id: 'CLEAR',
+      asset_class: 'FUTUROS',
+      currency: 'BRL',
+      current_price: 132450.00,
+      price_updated_at: '2026-11-02T09:00:00Z',
+      sector: 'Derivativos B3'
+    },
+    {
+      ticker: 'WDOZ26',
+      name: 'Mini Contrato Dólar Futuro',
+      broker_id: 'CLEAR',
+      asset_class: 'FUTUROS',
+      currency: 'BRL',
+      current_price: 5430.00,
+      price_updated_at: '2026-11-02T09:00:00Z',
+      sector: 'Derivativos B3'
+    },
+
+    // NOMAD Assets (USD)
+    {
+      ticker: 'VOO',
+      name: 'Vanguard S&P 500 ETF',
+      broker_id: 'NOMAD',
+      asset_class: 'ETF_INTL',
+      currency: 'USD',
+      current_price: 532.50,
+      price_updated_at: '2026-11-02T09:00:00Z',
+      sector: 'US Broad Market'
+    },
+    {
+      ticker: 'QQQ',
+      name: 'Invesco QQQ Trust (Nasdaq 100)',
+      broker_id: 'NOMAD',
+      asset_class: 'ETF_INTL',
+      currency: 'USD',
+      current_price: 498.20,
+      price_updated_at: '2026-11-02T09:00:00Z',
+      sector: 'Technology'
+    },
+    {
+      ticker: 'AAPL',
+      name: 'Apple Inc.',
+      broker_id: 'NOMAD',
+      asset_class: 'STOCKS_US',
+      currency: 'USD',
+      current_price: 228.40,
+      price_updated_at: '2026-11-02T09:00:00Z',
+      sector: 'Technology / Hardware'
+    },
+    {
+      ticker: 'MSFT',
+      name: 'Microsoft Corp.',
+      broker_id: 'NOMAD',
+      asset_class: 'STOCKS_US',
+      currency: 'USD',
+      current_price: 435.10,
+      price_updated_at: '2026-11-02T09:00:00Z',
+      sector: 'Cloud & Software'
+    }
+  ],
+  holdings: [
+    // Calculated dynamically, but seeded for initialization
+    {
+      holding_id: 'CLEAR_PETR4',
+      broker_id: 'CLEAR',
+      ticker: 'PETR4',
+      name: 'Petrobras PN',
+      asset_class: 'ACOES',
+      quantity: 400,
+      average_price: 34.50,
+      total_invested: 13800.00,
+      current_price: 38.60,
+      market_value: 15440.00,
+      unrealized_pl: 1640.00,
+      unrealized_pl_pct: 11.88,
+      currency: 'BRL',
+      market_value_brl: 15440.00
+    },
+    {
+      holding_id: 'CLEAR_VALE3',
+      broker_id: 'CLEAR',
+      ticker: 'VALE3',
+      name: 'Vale ON',
+      asset_class: 'ACOES',
+      quantity: 300,
+      average_price: 64.00,
+      total_invested: 19200.00,
+      current_price: 61.20,
+      market_value: 18360.00,
+      unrealized_pl: -840.00,
+      unrealized_pl_pct: -4.38,
+      currency: 'BRL',
+      market_value_brl: 18360.00
+    },
+    {
+      holding_id: 'CLEAR_WEGE3',
+      broker_id: 'CLEAR',
+      ticker: 'WEGE3',
+      name: 'WEG S.A. ON',
+      asset_class: 'ACOES',
+      quantity: 250,
+      average_price: 45.80,
+      total_invested: 11450.00,
+      current_price: 52.40,
+      market_value: 13100.00,
+      unrealized_pl: 1650.00,
+      unrealized_pl_pct: 14.41,
+      currency: 'BRL',
+      market_value_brl: 13100.00
+    },
+    {
+      holding_id: 'CLEAR_MXRF11',
+      broker_id: 'CLEAR',
+      ticker: 'MXRF11',
+      name: 'Maxi Renda FII',
+      asset_class: 'FIIS',
+      quantity: 1200,
+      average_price: 10.35,
+      total_invested: 12420.00,
+      current_price: 10.15,
+      market_value: 12180.00,
+      unrealized_pl: -240.00,
+      unrealized_pl_pct: -1.93,
+      currency: 'BRL',
+      market_value_brl: 12180.00
+    },
+    {
+      holding_id: 'CLEAR_HGLG11',
+      broker_id: 'CLEAR',
+      ticker: 'HGLG11',
+      name: 'CSHG Logística FII',
+      asset_class: 'FIIS',
+      quantity: 100,
+      average_price: 160.00,
+      total_invested: 16000.00,
+      current_price: 164.50,
+      market_value: 16450.00,
+      unrealized_pl: 450.00,
+      unrealized_pl_pct: 2.81,
+      currency: 'BRL',
+      market_value_brl: 16450.00
+    },
+    {
+      holding_id: 'NOMAD_VOO',
+      broker_id: 'NOMAD',
+      ticker: 'VOO',
+      name: 'Vanguard S&P 500 ETF',
+      asset_class: 'ETF_INTL',
+      quantity: 15,
+      average_price: 490.00,
+      total_invested: 7350.00,
+      current_price: 532.50,
+      market_value: 7987.50,
+      unrealized_pl: 637.50,
+      unrealized_pl_pct: 8.67,
+      currency: 'USD',
+      market_value_brl: 43292.25 // converted at 5.42
+    },
+    {
+      holding_id: 'NOMAD_AAPL',
+      broker_id: 'NOMAD',
+      ticker: 'AAPL',
+      name: 'Apple Inc.',
+      asset_class: 'STOCKS_US',
+      quantity: 20,
+      average_price: 210.00,
+      total_invested: 4200.00,
+      current_price: 228.40,
+      market_value: 4568.00,
+      unrealized_pl: 368.00,
+      unrealized_pl_pct: 8.76,
+      currency: 'USD',
+      market_value_brl: 24758.56
+    }
+  ],
+  transactions: [
+    {
+      transaction_id: 'TX-2026-001',
+      broker_id: 'CLEAR',
+      date: '2026-08-10',
+      ticker: 'PETR4',
+      type: 'BUY',
+      trade_category: 'SWING_TRADE',
+      quantity: 400,
+      unit_price: 34.45,
+      gross_value: 13780.00,
+      brokerage_fees: 0.00,
+      b3_emoluments: 4.13,
+      irrf: 0.00,
+      net_value: 13784.13,
+      currency: 'BRL',
+      exchange_rate: 1.0,
+      realized_pl: 0,
+      statement_ref: 'NC-20260810-01',
+      reconciliation_hash: 'CLEAR_PETR4_BUY_20260810_400'
+    },
+    {
+      transaction_id: 'TX-2026-002',
+      broker_id: 'CLEAR',
+      date: '2026-08-15',
+      ticker: 'VALE3',
+      type: 'BUY',
+      trade_category: 'SWING_TRADE',
+      quantity: 400,
+      unit_price: 64.00,
+      gross_value: 25600.00,
+      brokerage_fees: 0.00,
+      b3_emoluments: 7.68,
+      irrf: 0.00,
+      net_value: 25607.68,
+      currency: 'BRL',
+      exchange_rate: 1.0,
+      realized_pl: 0,
+      statement_ref: 'NC-20260815-02',
+      reconciliation_hash: 'CLEAR_VALE3_BUY_20260815_400'
+    },
+    {
+      transaction_id: 'TX-2026-003',
+      broker_id: 'CLEAR',
+      date: '2026-09-12',
+      ticker: 'VALE3',
+      type: 'SELL',
+      trade_category: 'SWING_TRADE',
+      quantity: 100,
+      unit_price: 68.50,
+      gross_value: 6850.00,
+      brokerage_fees: 0.00,
+      b3_emoluments: 2.05,
+      irrf: 0.34,
+      net_value: 6847.61,
+      currency: 'BRL',
+      exchange_rate: 1.0,
+      realized_pl: 447.95, // 6850 - 6400 - 2.05
+      statement_ref: 'NC-20260912-01',
+      reconciliation_hash: 'CLEAR_VALE3_SELL_20260912_100'
+    },
+    {
+      transaction_id: 'TX-2026-004',
+      broker_id: 'CLEAR',
+      date: '2026-10-14',
+      ticker: 'ITUB4',
+      type: 'BUY',
+      trade_category: 'SWING_TRADE',
+      quantity: 300,
+      unit_price: 33.20,
+      gross_value: 9960.00,
+      brokerage_fees: 0.00,
+      b3_emoluments: 2.98,
+      irrf: 0.00,
+      net_value: 9962.98,
+      currency: 'BRL',
+      exchange_rate: 1.0,
+      realized_pl: 0,
+      statement_ref: 'NC-20261014-01',
+      reconciliation_hash: 'CLEAR_ITUB4_BUY_20261014_300'
+    },
+    {
+      transaction_id: 'TX-2026-005',
+      broker_id: 'CLEAR',
+      date: '2026-10-22',
+      ticker: 'ITUB4',
+      type: 'SELL',
+      trade_category: 'SWING_TRADE',
+      quantity: 300,
+      unit_price: 36.10,
+      gross_value: 10830.00,
+      brokerage_fees: 0.00,
+      b3_emoluments: 3.25,
+      irrf: 0.54,
+      net_value: 10826.21,
+      currency: 'BRL',
+      exchange_rate: 1.0,
+      realized_pl: 863.77,
+      statement_ref: 'NC-20261022-01',
+      reconciliation_hash: 'CLEAR_ITUB4_SELL_20261022_300'
+    },
+    {
+      transaction_id: 'TX-2026-006',
+      broker_id: 'CLEAR',
+      date: '2026-10-25',
+      ticker: 'WINZ26',
+      type: 'SELL',
+      trade_category: 'DAY_TRADE',
+      quantity: 5,
+      unit_price: 132000.00,
+      gross_value: 1320.00,
+      brokerage_fees: 0.00,
+      b3_emoluments: 12.50,
+      irrf: 13.08,
+      net_value: 1294.42,
+      currency: 'BRL',
+      exchange_rate: 1.0,
+      realized_pl: 1307.50,
+      statement_ref: 'NC-20261025-DT',
+      reconciliation_hash: 'CLEAR_WINZ26_DT_20261025_5'
+    },
+    // NOMAD Transactions (USD)
+    {
+      transaction_id: 'TX-NOMAD-001',
+      broker_id: 'NOMAD',
+      date: '2026-07-20',
+      ticker: 'VOO',
+      type: 'BUY',
+      trade_category: 'SWING_TRADE',
+      quantity: 15,
+      unit_price: 490.00,
+      gross_value: 7350.00,
+      brokerage_fees: 0.00,
+      b3_emoluments: 0.00,
+      irrf: 0.00,
+      net_value: 7350.00,
+      currency: 'USD',
+      exchange_rate: 5.35,
+      realized_pl: 0,
+      statement_ref: 'NOMAD-CONF-7821',
+      reconciliation_hash: 'NOMAD_VOO_BUY_20260720_15'
+    },
+    {
+      transaction_id: 'TX-NOMAD-002',
+      broker_id: 'NOMAD',
+      date: '2026-08-05',
+      ticker: 'AAPL',
+      type: 'BUY',
+      trade_category: 'SWING_TRADE',
+      quantity: 20,
+      unit_price: 210.00,
+      gross_value: 4200.00,
+      brokerage_fees: 0.00,
+      b3_emoluments: 0.00,
+      irrf: 0.00,
+      net_value: 4200.00,
+      currency: 'USD',
+      exchange_rate: 5.40,
+      realized_pl: 0,
+      statement_ref: 'NOMAD-CONF-8910',
+      reconciliation_hash: 'NOMAD_AAPL_BUY_20260805_20'
+    }
+  ],
+  allocations: [
+    // Broker Target
+    {
+      allocation_id: 'BROKER_CLEAR',
+      level: 'BROKER',
+      target_identifier: 'CLEAR',
+      label: 'CLEAR Corretora (Brasil - BRL)',
+      target_percentage: 60.0,
+      tolerance_warning_pp: 2.0,
+      tolerance_critical_pp: 5.0
+    },
+    {
+      allocation_id: 'BROKER_NOMAD',
+      level: 'BROKER',
+      target_identifier: 'NOMAD',
+      label: 'NOMAD Global (Internacional - USD)',
+      target_percentage: 40.0,
+      tolerance_warning_pp: 2.0,
+      tolerance_critical_pp: 5.0
+    },
+    // Asset Class Target
+    {
+      allocation_id: 'CLASS_ACOES',
+      level: 'ASSET_CLASS',
+      target_identifier: 'ACOES',
+      label: 'Ações Brasil (B3)',
+      target_percentage: 25.0,
+      tolerance_warning_pp: 2.0,
+      tolerance_critical_pp: 5.0
+    },
+    {
+      allocation_id: 'CLASS_FIIS',
+      level: 'ASSET_CLASS',
+      target_identifier: 'FIIS',
+      label: 'Fundos Imobiliários (FIIs)',
+      target_percentage: 20.0,
+      tolerance_warning_pp: 2.0,
+      tolerance_critical_pp: 5.0
+    },
+    {
+      allocation_id: 'CLASS_ETF_INTL',
+      level: 'ASSET_CLASS',
+      target_identifier: 'ETF_INTL',
+      label: 'ETFs Internacionais (US)',
+      target_percentage: 25.0,
+      tolerance_warning_pp: 2.0,
+      tolerance_critical_pp: 5.0
+    },
+    {
+      allocation_id: 'CLASS_STOCKS_US',
+      level: 'ASSET_CLASS',
+      target_identifier: 'STOCKS_US',
+      label: 'Stocks Americanas',
+      target_percentage: 15.0,
+      tolerance_warning_pp: 2.0,
+      tolerance_critical_pp: 5.0
+    },
+    {
+      allocation_id: 'CLASS_CASH',
+      level: 'CASH',
+      target_identifier: 'CASH',
+      label: 'Caixa / Reserva Estratégica',
+      target_percentage: 15.0,
+      tolerance_warning_pp: 2.0,
+      tolerance_critical_pp: 5.0
+    }
+  ],
+  exchange_rates: [
+    {
+      rate_id: 'USD_BRL_20261102',
+      currency_pair: 'USD/BRL',
+      reference_date: '2026-11-02',
+      rate: 5.4200,
+      source: 'PTAX / Banco Central do Brasil',
+      is_current: true
+    },
+    {
+      rate_id: 'USD_BRL_20261001',
+      currency_pair: 'USD/BRL',
+      reference_date: '2026-10-01',
+      rate: 5.4520,
+      source: 'PTAX / Banco Central do Brasil',
+      is_current: false
+    },
+    {
+      rate_id: 'USD_BRL_20260901',
+      currency_pair: 'USD/BRL',
+      reference_date: '2026-09-01',
+      rate: 5.5800,
+      source: 'PTAX / Banco Central do Brasil',
+      is_current: false
+    }
+  ],
+  dividends: [
+    {
+      dividend_id: 'DIV-001',
+      broker_id: 'CLEAR',
+      ticker: 'MXRF11',
+      type: 'RENDIMENTO',
+      payment_date: '2026-10-15',
+      gross_amount: 108.00,
+      withholding_tax: 0.00,
+      net_amount: 108.00,
+      currency: 'BRL'
+    },
+    {
+      dividend_id: 'DIV-002',
+      broker_id: 'CLEAR',
+      ticker: 'HGLG11',
+      type: 'RENDIMENTO',
+      payment_date: '2026-10-15',
+      gross_amount: 110.00,
+      withholding_tax: 0.00,
+      net_amount: 110.00,
+      currency: 'BRL'
+    },
+    {
+      dividend_id: 'DIV-003',
+      broker_id: 'CLEAR',
+      ticker: 'PETR4',
+      type: 'DIVIDENDO',
+      payment_date: '2026-09-20',
+      gross_amount: 320.00,
+      withholding_tax: 0.00,
+      net_amount: 320.00,
+      currency: 'BRL'
+    },
+    {
+      dividend_id: 'DIV-004',
+      broker_id: 'NOMAD',
+      ticker: 'VOO',
+      type: 'DIVIDENDO',
+      payment_date: '2026-09-28',
+      gross_amount: 25.40,
+      withholding_tax: 7.62, // 30% US withholding tax for non-resident
+      net_amount: 17.78,
+      currency: 'USD'
+    }
+  ],
+  tax_monthly: [
+    {
+      tax_closing_id: 'TAX-2026-10-CLEAR-DT',
+      year_month: '2026-10',
+      broker_id: 'CLEAR',
+      category: 'DAY_TRADE',
+      category_label: 'Day Trade (Todas as Classes)',
+      total_sales_value: 1320.00,
+      gross_profit_loss: 1307.50,
+      deductible_costs: 12.50,
+      net_operational_result: 1295.00,
+      exempt_sales_flag: false,
+      previous_accumulated_loss: 0.00,
+      loss_compensated: 0.00,
+      remaining_accumulated_loss: 0.00,
+      taxable_base: 1295.00,
+      tax_rate: 0.20,
+      gross_tax_due: 259.00,
+      irrf_credits_deducted: 13.08,
+      prior_underminimum_tax: 0.00,
+      final_tax_due: 245.92,
+      closing_status: 'CLOSED',
+      legal_reference: 'Art. 65, IN RFB 1.585/2015 — Alíquota 20%. Sem faixa de isenção.'
+    },
+    {
+      tax_closing_id: 'TAX-2026-10-CLEAR-SWING',
+      year_month: '2026-10',
+      broker_id: 'CLEAR',
+      category: 'ACOES_SWING',
+      category_label: 'Ações — Operações Comuns (Swing Trade)',
+      total_sales_value: 10830.00,
+      gross_profit_loss: 863.77,
+      deductible_costs: 3.25,
+      net_operational_result: 860.52,
+      exempt_sales_flag: true, // Vendas R$ 10.830 <= R$ 20.000 -> ISENTO!
+      previous_accumulated_loss: 0.00,
+      loss_compensated: 0.00,
+      remaining_accumulated_loss: 0.00,
+      taxable_base: 0.00,
+      tax_rate: 0.15,
+      gross_tax_due: 0.00,
+      irrf_credits_deducted: 0.00,
+      prior_underminimum_tax: 0.00,
+      final_tax_due: 0.00,
+      closing_status: 'CLOSED',
+      legal_reference: 'Art. 59, IN RFB 1.585/2015 — Isenção concedida: alienação total no mês inferior a R$ 20.000,00.'
+    }
+  ],
+  tax_losses: [
+    {
+      loss_id: 'LOSS-ACOES-202609',
+      category: 'ACOES_SWING',
+      year_month: '2026-09',
+      beginning_loss_balance: 0.00,
+      loss_incurred_in_month: 0.00,
+      loss_compensated_in_month: 0.00,
+      ending_loss_balance: 0.00
+    },
+    {
+      loss_id: 'LOSS-DAYTRADE-202609',
+      category: 'DAY_TRADE',
+      year_month: '2026-09',
+      beginning_loss_balance: 0.00,
+      loss_incurred_in_month: 0.00,
+      loss_compensated_in_month: 0.00,
+      ending_loss_balance: 0.00
+    }
+  ],
+  darfs: [
+    {
+      darf_id: 'DARF-2026-10',
+      period_reference: '2026-10',
+      tax_code: '6015',
+      tax_code_description: 'Ganhos Líquidos em Operações em Bolsa - PF',
+      amount_due: 245.92,
+      due_date: '2026-11-30',
+      status: 'DARF_PENDING_PAYMENT',
+      paid_date: null,
+      paid_amount: null,
+      proof_reference: null,
+      breakdown_summary: 'Day Trade Out/2026: Lucro R$ 1.295,00 @ 20% = R$ 259,00 (-) IRRF R$ 13,08. Ações Swing isentas (vendas R$ 10.830 <= R$ 20.000).',
+      notes: 'Vencimento em 30/11/2026 (último dia útil do mês subsequente).'
+    },
+    {
+      darf_id: 'DARF-2026-09',
+      period_reference: '2026-09',
+      tax_code: '6015',
+      tax_code_description: 'Ganhos Líquidos em Operações em Bolsa - PF',
+      amount_due: 0.00,
+      due_date: '2026-10-31',
+      status: 'NO_DARF_REQUIRED',
+      paid_date: null,
+      paid_amount: null,
+      proof_reference: null,
+      breakdown_summary: 'Venda de VALE3 R$ 6.850 <= R$ 20.000 (Isento de IR).',
+      notes: 'Não houve necessidade de emissão de DARF.'
+    }
+  ],
+  cash_balances: [
+    {
+      balance_id: 'CASH_CLEAR',
+      broker_id: 'CLEAR',
+      currency: 'BRL',
+      available_cash: 18500.00,
+      reserved_cash: 2500.00,
+      last_updated: '2026-11-02T09:00:00Z'
+    },
+    {
+      balance_id: 'CASH_NOMAD',
+      broker_id: 'NOMAD',
+      currency: 'USD',
+      available_cash: 2150.00,
+      reserved_cash: 0.00,
+      last_updated: '2026-11-02T09:00:00Z'
+    }
+  ],
+  settings: {
+    base_currency: 'BRL',
+    rebalance_tolerance_warning_pp: '2.0',
+    rebalance_tolerance_critical_pp: '5.0',
+    auto_refresh_ptax: 'true',
+    darf_auto_alert: 'true',
+    google_sheets_sync_enabled: 'false',
+    connected_sheet_id: ''
+  },
+  audit_logs: [
+    {
+      log_id: 'LOG-001',
+      timestamp: '2026-11-02T09:00:00Z',
+      event_type: 'INITIAL_SEED',
+      entity: 'DATABASE',
+      details: 'Carteira inicial de demonstração carregada com sucesso.',
+      operator: 'SYSTEM'
+    }
+  ]
+};
